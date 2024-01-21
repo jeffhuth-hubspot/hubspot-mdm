@@ -1,0 +1,195 @@
+version: 2
+
+models:
+  - name: stg_gcs__acme_contacts
+    description: |
+      "Acme Contacts: Contacts sourced from the InsightGrid`s CRM software. These are both generated automatically based on sign-ups for
+      marketing content and events, and freemium products, as well as manually curated during conversations with sales reps.
+      Acme Contacts are loaded from Google Cloud Storage (Acme bucket, contacts folder)."
+    columns:
+      - name: source_contact_key
+        description: '{{ doc("source_contact_key") }}'
+        tests:
+          - unique
+          - not_null
+      - name: email_address
+        description: '{{ doc("contact_email_address") }}'
+        tests:
+          - unique:
+              config:
+                severity: error
+                error_if: ">10"
+                warn_if: ">0"
+          - not_null:
+              config:
+                severity: error
+                error_if: ">10"
+                warn_if: ">0"
+      - name: name
+        description: '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: '{{ doc("contact_phone_number") }}'
+      - name: country
+        description: '{{ doc("contact_country") }}'
+      - name: title
+        description: '{{ doc("contact_title") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+
+
+  - name: stg_gcs__crm_contacts
+    description: |
+      "CRM Contacts: Contacts sourced from the InsightGrid`s CRM software. These are both generated automatically based on sign-ups
+      for marketing content and events, and freemium products, as well as manually curated during conversations with sales reps.
+      CRM Contacts are loaded from Google Cloud Storage (CRM bucket, contacts folder)."
+    columns:
+      - name: source_contact_key
+        description: '{{ doc("source_contact_key") }}'
+        tests:
+          - unique
+          - not_null
+      - name: email_address
+        description: '{{ doc("contact_email_address") }}'
+        tests:
+          - unique:
+              config:
+                severity: error
+                error_if: ">10"
+                warn_if: ">0"
+          - not_null:
+              config:
+                severity: error
+                error_if: ">10"
+                warn_if: ">0"
+      - name: name
+        description: '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: '{{ doc("contact_phone_number") }}'
+      - name: favorite_color
+        description: '{{ doc("contact_favorite_color") }}'
+      - name: title
+        description: '{{ doc("contact_title") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+
+  - name: stg_gcs__rapid_data_contacts
+    description: |
+      "RapidData Contacts: Contacts sourced from RapidData, a data broker known for sourcing contacts using web tracking pixels, strategic partner`s
+      web traffic data, and myriad other automated means. These contacts tend to have higher error rates and duplicated records,
+      but provide for a large sample of contacts.
+      RepidData Contacts are loaded from Google Cloud Storage (RepidData bucket, contacts folder)."
+    columns:
+      - name: source_contact_key
+        description: '{{ doc("source_contact_key") }}'
+        tests:
+          - unique
+          - not_null
+      - name: email_address
+        description: '{{ doc("contact_email_address") }}'
+        tests:
+          - unique:
+              config:
+                severity: error
+                error_if: ">10"
+                warn_if: ">0"
+          - not_null:
+              config:
+                severity: error
+                error_if: ">10"
+                warn_if: ">0"
+      - name: name
+        description: '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: '{{ doc("contact_phone_number") }}'
+      - name: ip_address
+        description: '{{ doc("contact_ip_address") }}'
+      - name: title
+        description: '{{ doc("contact_title") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: intent_signals
+        description: '{{ doc("contact_intent_signals") }}'
+      - name: do_not_call
+        description: '{{ doc("contact_do_not_call") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+
+
+  - name: stg_gcs__iso_countries
+    description: |
+      "ISO Country Names and Codes from the ISO Country Dataset, https://github.com/datasets/country-list/blob/master/data.csv
+      ISO Countries are loaded from Google Cloud Storage (Hubspot MDM bucket, ISO folder)"
+    columns:
+      - name: country_code
+        description: '{{ doc("iso_country_code") }}'
+        tests:
+          - unique
+          - not_null
+      - name: country_name
+        description: '{{ doc("iso_country_name") }}'
+        tests:
+          - unique
+          - not_null
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+

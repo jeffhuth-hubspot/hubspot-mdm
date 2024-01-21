@@ -1,0 +1,45 @@
+version: 2
+
+models:
+  - name: dim_customer
+    description: |
+      "Customer Contacts: The latest, clean (de-duplicated and normalized) Contact data from multiple data sources: Acme, CRM, and RapidData"
+    columns:
+      - name: contact_id
+        description: '{{ doc("contact_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: name
+        description: Latest Name from all sources. '{{ doc("contact_name") }}'
+      - name: email_address
+        description: Latest valid Email Address. '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: Latest valid Phone Number. '{{ doc("contact_phone_number") }}'
+      - name: title
+        description: Latest title from all sources. '{{ doc("contact_title") }}'
+      # Country and Company fields (from Acme)
+      - name: country
+        description: '{{ doc("contact_country") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      # CRM and RapidData fields
+      - name: favorite_color
+        description: '{{ doc("contact_favorite_color") }}'
+      - name: intent_signals
+        description: '{{ doc("contact_intent_signals") }}'
+      - name: do_not_call
+        description: '{{ doc("contact_do_not_call") }}'
+      # Audit fields
+      - name: created_at
+        description: First created_at. '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: Latest updated_at. '{{ doc("contact_updated_at") }}'

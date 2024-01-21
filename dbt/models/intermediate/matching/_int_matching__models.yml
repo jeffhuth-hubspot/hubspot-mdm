@@ -1,0 +1,194 @@
+version: 2
+
+models:
+  - name: int_matching__enrich_contacts
+    description: "A Python model to enrich and validate all Contacts from Acme, CRM, and RapidData union table."
+    columns:
+      - name: source_contact_key
+        description: '{{ doc("source_contact_key") }}'
+        tests:
+          - unique
+          - not_null
+      - name: email_address
+        description: '{{ doc("contact_email_address") }}'
+      - name: source_name
+        description: '{{ doc("source_name") }}'
+      - name: name
+        description: '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: '{{ doc("contact_phone_number") }}'
+      - name: title
+        description: '{{ doc("contact_title") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      - name: favorite_color
+        description: '{{ doc("contact_favorite_color") }}'
+      - name: ip_address
+        description: '{{ doc("contact_ip_address") }}'
+      - name: intent_signals
+        description: '{{ doc("contact_intent_signals") }}'
+      - name: do_not_call
+        description: '{{ doc("contact_do_not_call") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      - name: country_code
+        description: '{{ doc("iso_country_code") }}'
+      - name: country_name
+        description: '{{ doc("contact_country") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+
+      # New fields from matching
+      - name: is_email_valid
+        description: '{{ doc("matching_is_email_valid") }}'
+      - name: is_ip_addr_valid
+        description: '{{ doc("matching_is_ip_addr_valid") }}'
+      - name: is_company_domain_valid
+        description: '{{ doc("matching_is_company_domain_valid") }}'
+      - name: is_phone_us_valid
+        description: '{{ doc("matching_is_phone_us_valid") }}'
+      - name: phone_number_clean
+        description: '{{ doc("matching_phone_number_clean") }}'
+      - name: first_name
+        description: '{{ doc("matching_first_name") }}'
+      - name: last_name
+        description: '{{ doc("matching_last_name") }}'
+      - name: first_initial
+        description: '{{ doc("matching_first_initial") }}'
+      - name: first_name_clean
+        description: '{{ doc("matching_first_name_clean") }}'
+      - name: last_name_clean
+        description: '{{ doc("matching_last_name_clean") }}'
+      - name: company_name_clean
+        description: '{{ doc("matching_company_name_clean") }}'
+      - name: first_name_mp
+        description: '{{ doc("matching_first_name_mp") }}'
+      - name: last_name_mp
+        description: '{{ doc("matching_last_name_mp") }}'
+      - name: company_name_mp
+        description: '{{ doc("matching_company_name_mp") }}'
+
+
+  - name: int_matching__match_contacts
+    description: "A Python model to create sets of matching keys (source_customer_key) based on matching rules with the recordlinkage Python package"
+    columns:
+      - name: "matches"
+        description: '{{ doc("matching_keys") }}'
+
+
+  - name: int_matching__deduped_contacts
+    description: |
+      "De-duplicated and Normalized Contacts: This model combines the enriched master data with the ordered matching keys to get fields from the first record (contact_id),
+      latest record (for the name, title, company_name, company_domain), latest valid email address and phone number (from all sources),
+      and latest record from each source (for source specific fields like favorite color, intent_signals, do_not_call).
+      For the latest Acme record, the complete Company fields (company_name, company_domain, company_industry, company_employees, company_revenue, country_name, country_code)
+      are also included. NOTE: The Acme Company may differ from the latest known company from other sources (CRM, RapidData)."
+    columns:
+      - name: contact_id
+        description: '{{ doc("contact_id") }}'
+        tests:
+          - unique
+          - not_null
+      - name: match_key
+        description: '{{ doc("match_key") }}'
+        tests:
+          - unique
+          - not_null
+      - name: match_key_arr
+        description: |
+          "A set of contact matching keys, ordered by create_at.
+          '{{ doc("matching_keys") }}'"
+      - name: sources_arr
+        description: '{{ doc("sources_arr") }}'
+      - name: first_source_nm
+        description: First Source to create the record. '{{ doc("source_name") }}'
+      # Latest (valid) fields
+      - name: latest_source_nm
+        description: Latest Source to update the record. '{{ doc("source_name") }}'
+      - name: name
+        description: Latest Name from all sources. '{{ doc("contact_name") }}'
+      - name: email_address
+        description: Latest valid Email Address. '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: Latest valid Phone Number. '{{ doc("contact_phone_number") }}'
+      - name: title
+        description: Latest title from all sources. '{{ doc("contact_title") }}'
+      # Company fields (from Acme)
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      - name: company_code
+        description: '{{ doc("iso_country_code") }}'
+      - name: country
+        description: '{{ doc("contact_country") }}'
+      # CRM and RapidData fields
+      - name: favorite_color
+        description: '{{ doc("contact_favorite_color") }}'
+      - name: ip_address
+        description: '{{ doc("contact_ip_address") }}'
+      - name: intent_signals
+        description: '{{ doc("contact_intent_signals") }}'
+      - name: do_not_call
+        description: '{{ doc("contact_do_not_call") }}'
+      # Audit fields
+      - name: first_file_nm
+        description: File name from first file with the Contact. '{{ doc("file_nm") }}'
+      - name: first_file_row_number
+        description: File row number from first file with the Contact.'{{ doc("file_row_number") }}'
+      - name: first_file_nm
+        description: File name from latest file to update the Contact. '{{ doc("file_nm") }}'
+      - name: first_file_row_number
+        description: File row number from latest file to update the Contact.'{{ doc("file_row_number") }}'
+      - name: created_at
+        description: First created_at. '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: Latest updated_at. '{{ doc("contact_updated_at") }}'

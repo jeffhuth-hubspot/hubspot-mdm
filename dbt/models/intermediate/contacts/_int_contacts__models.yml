@@ -1,0 +1,126 @@
+version: 2
+
+models:
+  - name: int_contacts__union_all
+    description: "ALL Contacts from Acme, CRM, and RapidData with a lookup to ISO Country for the country_code."
+    columns:
+      - name: source_contact_key
+        description: '{{ doc("source_contact_key") }}'
+        tests:
+          - unique
+          - not_null
+      - name: email_address
+        description: '{{ doc("contact_email_address") }}'
+        tests:
+          - unique:
+              config:
+                severity: warn
+                warn_if: ">0"
+          - not_null:
+              config:
+                severity: warn
+                warn_if: ">0"
+      - name: source_name
+        description: '{{ doc("source_name") }}'
+        tests:
+          - not_null
+          - accepted_values:
+              values: ["acme", "crm", "rapid"]
+      - name: name
+        description: '{{ doc("contact_name") }}'
+      - name: phone_number
+        description: '{{ doc("contact_phone_number") }}'
+      - name: title
+        description: '{{ doc("contact_title") }}'
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "CEO (Chief Executive Officer)",
+                  "CIO (Chief Information Officer)",
+                  "COO (Chief Operating Officer)",
+                  "Director",
+                  "IC",
+                  "Manager",
+                  "Senior Director",
+                  "Senior Vice President",
+                  "Team Lead",
+                  "Vice President",
+                ]
+              config:
+                severity: warn
+                warn_if: ">0"
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+        tests:
+          - accepted_values:
+              values:
+                [
+                  "Education",
+                  "Finance",
+                  "Healthcare",
+                  "Logistics",
+                  "Manufacturing",
+                  "Tech",
+                ]
+              config:
+                severity: warn
+                warn_if: ">0"
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      - name: favorite_color
+        description: '{{ doc("contact_favorite_color") }}'
+      - name: ip_address
+        description: '{{ doc("contact_ip_address") }}'
+      - name: intent_signals
+        description: '{{ doc("contact_intent_signals") }}'
+      - name: do_not_call
+        description: '{{ doc("contact_do_not_call") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'
+      - name: company_name
+        description: '{{ doc("contact_company_name") }}'
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+      - name: company_industry
+        description: '{{ doc("contact_company_industry") }}'
+      - name: company_employees
+        description: '{{ doc("contact_company_employees") }}'
+      - name: company_revenue
+        description: '{{ doc("contact_company_revenue") }}'
+      - name: country_code
+        description: '{{ doc("iso_country_code") }}'
+      - name: country_name
+        description: '{{ doc("contact_country") }}'
+      - name: created_at
+        description: '{{ doc("contact_created_at") }}'
+      - name: updated_at
+        description: '{{ doc("contact_updated_at") }}'
+      - name: file_nm
+        description: '{{ doc("file_nm") }}'
+      - name: file_row_number
+        description: '{{ doc("file_row_number") }}'
+      - name: file_content_key
+        description: '{{ doc("file_content_key") }}'
+      - name: file_last_modified
+        description: '{{ doc("file_last_modified") }}'
+      - name: start_scan_time
+        description: '{{ doc("start_scan_time") }}'

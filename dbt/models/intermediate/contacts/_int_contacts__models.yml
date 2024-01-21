@@ -12,14 +12,7 @@ models:
       - name: email_address
         description: '{{ doc("contact_email_address") }}'
         tests:
-          - unique:
-              config:
-                severity: warn
-                warn_if: ">0"
-          - not_null:
-              config:
-                severity: warn
-                warn_if: ">0"
+          - not_null
       - name: source_name
         description: '{{ doc("source_name") }}'
         tests:
@@ -124,3 +117,13 @@ models:
         description: '{{ doc("file_last_modified") }}'
       - name: start_scan_time
         description: '{{ doc("start_scan_time") }}'
+
+
+  - name: int_contacts__companies
+    description: "Companies: The most recent information on Companies from Acme. Used as a lookup for Contacts union."
+    columns:
+      - name: company_domain
+        description: '{{ doc("contact_company_domain") }}'
+        tests:
+          - unique
+          - not_null

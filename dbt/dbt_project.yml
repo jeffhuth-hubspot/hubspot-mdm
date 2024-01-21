@@ -36,7 +36,20 @@ clean-targets:         # directories to be removed by `dbt clean`
 # using the `{{ config(...) }}` macro.
 
 models:
-  my_new_project:
+  +snowflake_warehouse: "TEST_WH"
+  hubspot-mdm:
     # Applies to all files under models/example/
-    example:
+    
+    staging:
+      +schema: stg
+      +materialized: view
+    
+    intermediate:
+      +schema: int
+      +materialized: view
+    
+    marts:
       +materialized: table
+
+      contacts:
+        +schema: contacts

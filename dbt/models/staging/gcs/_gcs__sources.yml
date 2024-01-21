@@ -1,0 +1,12 @@
+version: 2
+
+sources:
+  - name: gcs
+    description: Google Cloud Storage External Tables
+    database: source_db
+    schema: gcs  
+    tables:
+      - name: acme_contacts
+      - name: crm_contacts
+      - name: rapid_data_contacts
+      - name: iso_countries

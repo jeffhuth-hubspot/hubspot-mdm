@@ -1,0 +1,10 @@
+packages:
+- package: dbt-labs/dbt_utils
+  version: 1.1.1
+- package: dbt-labs/dbt_external_tables
+  version: 0.8.7
+- package: dbt-labs/codegen
+  version: 0.12.1
+- package: jmangroup/data_profiler
+  version: 1.0.0
+sha1_hash: c60a3270700737fdfe22e07393491c87e867ea33

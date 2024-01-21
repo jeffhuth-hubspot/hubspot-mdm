@@ -1,7 +1,7 @@
 version: 2
 
 models:
-  - name: dim_customer
+  - name: dim_contacts
     description: |
       "Customer Contacts: The latest, clean (de-duplicated and normalized) Contact data from multiple data sources: Acme, CRM, and RapidData"
     columns:

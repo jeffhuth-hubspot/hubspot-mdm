@@ -8,7 +8,7 @@
 use role accountadmin;
 use database source_db;
 use warehouse test_wh;
-use schem source_db.gcs;
+use schema source_db.gcs;
 
 create or replace storage integration gcs_storage_integration
     type = external_stage
@@ -22,7 +22,8 @@ create or replace file format csv_format
     field_delimeter = ','
     skip_header = 1
     null_if = ('NULL', 'null')
-    empty_field_as_null = true;
+    empty_field_as_null = true
+    compression = none;
 
 create or replace stage gcs_acme_contacts
     storage_integration = gcs_storage_integration
@@ -43,6 +44,12 @@ create or replace stage gcs_rapid_data_contacts
 create or replace stage gcs_iso_countries
 storage_integration = gcs_storage_integration
 url = 'gcs://hubspot_mdm/sources/iso'
+file_format = csv_format;
+
+-- Reference: https://medium.com/@dipon778/continuous-copy-unload-data-from-snowflake-to-a-external-stage-google-cloud-storage-as-csv-files-3b1ff0ada2ca
+create or replace stage gcs_output_contacts
+storage_integration = gcs_storage_integration
+url = 'gcs://hubspot_mdm/output'
 file_format = csv_format;
 
 
@@ -77,6 +84,7 @@ file_format = (
     TRIM_SPACE = TRUE
 )
 ;
+
 
 CREATE OR REPLACE EXTERNAL TABLE SOURCE_DB.GCS.CRM_CONTACTS(
     NAME varchar AS (value:c1::varchar),
@@ -139,9 +147,6 @@ file_format = (
 )
 ;
 
-select * from SOURCE_DB.GCS.RAPID_DATA_CONTACTS;
-
-
 
 CREATE OR REPLACE EXTERNAL TABLE SOURCE_DB.GCS.ISO_COUNTRIES(
     COUNTRY_NAME varchar AS (value:c1::varchar),
@@ -165,12 +170,20 @@ file_format = (
 )
 ;
 
+
+-- Create stage for other python packages
+-- Standard Snowpark contains these packages needed: pandas, phonenumbers, recordlinkage, validators, email_validator
+CREATE STAGE OTHER_PYTHON_PACKAGES;
+-- Added external library to stage: nameparser package (wheel file and wheel loader)
+-- Reference: https://pypi.org/project/nameparser/#files
+
+
     {% endset %}
 
     {% do run_query(sql) %}
 
     {% do log(
-        "Created execution role, granted privileges to role, and assigned users to role",
+        "Created GCS stages and external tables in Snowflake",
         info=True,
     ) %}
 

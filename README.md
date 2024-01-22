@@ -3,19 +3,19 @@ Submitter: Jeff Huth
 
 ## Approach and Assumptions
 **Approach**
-- **GCS**: Created buckets on for each system with folders for each file type on Google Cloud Storage. These are folders to receive and stage source data and output transformed data.
+- **GCS**: Created buckets for each system with folders for each file type on Google Cloud Storage (GCS). These are folders to receive and stage source data and output transformed data.
     - hubspot-acme/contacts/acme__contacts.csv
     - hubspot-crm2/contacts/crm__contacts.csv
     - hubspot-rapid_data/contacts/rapid_data__contacts.csv
     - hubspot_mdm
-        - sources/iso/iso_countries: for country names and 2-letter codes
+        - sources/iso/[iso_countries](https://github.com/datasets/country-list/blob/master/data.csv): for country names and 2-letter codes
         - output: for dim_contacts.csv
-- **Snowflake**: Created and setup Snowflake instance. Snowflake was chosen over BigQuery because I am more familiar w/ Snowflake Snowpark Python and using it with dbt.
-    - Initial setup: Set up a trial Snowflake account with SOURCE_DB (source database w/ GCS schema), DEV_DWH (target DWH), TEST_WH (x-small warehouse).
+- **Snowflake**: Created and setup Snowflake instance. Snowflake was chosen over BigQuery because I am more familiar w/ Snowflake Snowpark Python and using it with dbt. Also, Snowflake Snowpark Conda had several of the libraries (by default) that I planned to use.
+    - Initial setup: Set up a trial Snowflake account with SOURCE_DB (source database w/ GCS schema), DEV_DWH (target DWH w/ MDM schema), TEST_WH (x-small warehouse).
     - Created storage integration, file format, stages, and external tables to source files in GCS.
     - Created storage integration, file format, stage for unloading CSV to GCS.
 - **GitHub**: Created personal Git repository (this repository) for dbt and Python development.
-- **Python**: Set up virtualenvironment (hubspot-mdm, Python 3.10). Created Jupyter Notebooks to:
+- **Python**: Set up a virtual environment (hubspot-mdm, Python 3.10).
     - Installed packages:
         - pandas: for dataframes and data analysis
         - ydata-profiling: to data profile reports for CSVs
@@ -28,31 +28,31 @@ Submitter: Jeff Huth
     - Python Model Dev (python-model-dev.ipynb): Jupyter Notebook to develop the dbt Python models (see below).
         - Connected to Snowflake and analyzed/transformed the data using DataFrames and functions.
         - Experimented with the various functions available in Snowflake Snowpark Conda to see how to best validate and match data.
-- **dbt-Cloud**: Set up dbt-Cloud project.
-    - Connected to GitHub repo and Snowflake
+- **dbt-Cloud**: Set up dbt-Cloud project and connected to GitHub repo and Snowflake account.
     - **Models**:
-        - staging/gcs: Created source.yml, stg_models, and models.yml to read GCS external tables for each source
+        - Testing: All (or almost all) models tested with primary key unique and not null. Also, some columns have allowed values tests. 
+        - staging/gcs: Created source.yml, stg_models, and models.yml to read GCS external tables for each source.
         - intermediate:
             - contacts:
-                - int_contacts__companies: SQL model to create a companies (w/ ISO countries) lookup table
-                - int_contacts__union_all: SQL model to create a union table of the contacts from the 3 sources (Acme, CRM, RapidData) to review all data, all fields, and begin transforming data.
+                - int_contacts__companies: SQL model to create a companies (w/ ISO countries) lookup table (based on Acme data, the only source with countries). Ideally, this could fill-in missing countries from Contact records from other systems.
+                - int_contacts__union_all: SQL model to create a union table of the Contacts from the 3 sources (Acme, CRM, RapidData) to review all data, all fields, and begin transforming data.
             - matching:
-                - int_matching__enrich_contacts: Python model to enrich the Contacts data with additional fields for validation and matching pre-processing.
+                - int_matching__enrich_contacts: Python model to enrich the Contacts data with additional fields for validation and matching pre-processing (functions to clean and validate person names, emails, phone numbers, email addresses, ip addresses, and domains).
                 - int_matching__match_contacts: Python model to run matching rules on the enriched Contacts to find equivalent matching keys for each Contact.
-                - int_matching__deduped_contacts: SQL model to combine the matching keys with the enriched Contacts to normalize and de-duplicate the Contacts.
+                - int_matching__deduped_contacts: SQL model to combine the matching keys with the enriched Contact data to normalize and de-duplicate the Contacts.
         - marts:
-            - contacts/dim_contacts: SQL model to present the cleansed, normalized, and de-duplicated clients to the end-users.
+            - contacts/dim_contacts: SQL model to present the cleansed, normalized, and de-duplicated clients to the end-users (and replicate to the output folder on GCS).
 
         ![dbt_lineage](https://github.com/jeffhuth-hubspot/hubspot-mdm/blob/e8e6aa2637d83085cf7488f1fc2088edb8d04b83/dbt-lineage.png)
 
     - **Macros**: Created the following macros to create/run procedures in Snowflake:
-        - create_integration_stages: To create the integrations, stages, and external tables.
-        - create_unload_stream_procedure: Attempted to get a stream procedure to work, but ran out of time.
+        - create_integration_stages: DDL to create the integrations, stages, and external tables.
+        - create_unload_stream_procedure: DDL to create integration, stage, stream, procedure, and task. Attempted to get this to work, but ran out of time.
         - trigger_gcs_stage_refresh: A macro to refresh the stage source data from GCS.
-        - unload_table_to_gcs: A macro to unload the dim_contacts table to a CSV in the GCC/output folder.
+        - unload_table_to_gcs: A macro to unload the dim_contacts table to a CSV in the GCS/output folder.
     - **Environments & Jobs**
-        - dev_deployment: Created environment to deploy code to DEV_DWH database
-        - dev-build-all: Created dbt job (scheduled twice daily) to:
+        - dev_deployment (Environment): Created environment to deploy code to DEV_DWH database
+        - dev-build-all (Scheduled Job): Created dbt job (scheduled twice daily) to:
             - Run macro to refresh stage external tables (for GCS Sources). This would pick up new files and process them.
             - dbt build: Run and test the models to create dim_contacts.
             - Run macro to unload dim_contacts as a CSV file to GCS/output bucket/folder.
@@ -112,7 +112,7 @@ Submitter: Jeff Huth
 - Determine how to create a good, stable, unique, immutable contact_id.
 - PII data and security: We need to securely store, transfer, and limit access to this personal data.
 
-## Next steps and productionization
+## Next steps and productionizing
 **Next Steps**
 - Matching Rules: Add IP address to the matching rules and adjust the thresholds and phonetic checks to see if we could get better match rates.
     - Replace the All vs. All index with an index for email address or IP address.
@@ -129,3 +129,4 @@ Submitter: Jeff Huth
     - dbt Grants: Add grants to project yaml files to control access to data files, folders, and tables.
     - Create roles, service account users, and business users in GCP/GCS and Snowflake.
     - Snowflake PII Dynamic Masking Rules: Add functions to tag and dynamically mask PII data in Snowflake.
+- CI/CD: Set up dbt Slim-CI and CI/CD tests for: dbt Project Evaluator, SQLFluff, Datafold, and other tests.

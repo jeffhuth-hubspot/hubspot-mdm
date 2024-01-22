@@ -43,7 +43,7 @@ Submitter: Jeff Huth
         - marts:
             - contacts/dim_contacts: SQL model to present the cleansed, normalized, and de-duplicated clients to the end-users.
 
-        ![dbt_lineage](dbt_lineage.png "dbt Lineage DAG")
+        ![dbt_lineage](./dbt_lineage.png "dbt Lineage DAG")
 
     - **Macros**: Created the following macros to create/run procedures in Snowflake:
         - create_integration_stages: To create the integrations, stages, and external tables.

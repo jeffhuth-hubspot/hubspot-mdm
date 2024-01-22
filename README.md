@@ -22,7 +22,7 @@ Submitter: Jeff Huth
         - [phonenumbers](https://github.com/daviddrysdale/python-phonenumbers): to validate phone numbers
         - [validators](https://validators.readthedocs.io/en/latest/#): validate domain and ip_address (ipv4, ipv6)
         - [email-validator](https://github.com/JoshData/python-email-validator): to validate email addresses
-        - [ameparser](https://github.com/derek73/python-nameparser): to parse first/last names
+        - [nameparser](https://github.com/derek73/python-nameparser): to parse first/last names
         - [recordlinkage](https://recordlinkage.readthedocs.io/en/latest/): to create matching rules
     - Profile Data (data-profile-csvs.ipynb): Jupyter Notebook to review each source file to see the shape of the data, unique keys, distinct values, etc.
     - Python Model Dev (python-model-dev.ipynb): Jupyter Notebook to develop the dbt Python models (see below).

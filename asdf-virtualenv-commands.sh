@@ -47,8 +47,3 @@ $ pip freeze > requirements.txt
 
 # Deactivate virtualenv
 $ pyenv deactivate
-
-
-# Load dbt.env environment variables
-$ cd  /Users/jeffhuth/Develop/Training/end-to-end-data-engineering-project-4413618/dbt_transformation
-$ set -a; source dbt.env; set +a
